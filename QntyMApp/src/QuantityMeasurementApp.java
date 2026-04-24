@@ -16,13 +16,13 @@ public class QuantityMeasurementApp {
             return value * toFeet;
         }
 
-        public double fromBase(double baseValue) {
-            return baseValue / toFeet;
+        public double fromBase(double base) {
+            return base / toFeet;
         }
     }
 
     public static class QuantityLength {
-        private final double value;
+        final double value;
         private final LengthUnit unit;
 
         public QuantityLength(double value, LengthUnit unit) {
@@ -37,19 +37,24 @@ public class QuantityMeasurementApp {
             return unit.toBase(value);
         }
 
-        public QuantityLength convertTo(LengthUnit target) {
-            if (target == null) throw new IllegalArgumentException();
-            double base = toBase();
-            double converted = target.fromBase(base);
-            return new QuantityLength(converted, target);
+        public QuantityLength add(QuantityLength other) {
+            if (other == null) throw new IllegalArgumentException();
+
+            double sumBase = this.toBase() + other.toBase();
+            double result = this.unit.fromBase(sumBase);
+
+            return new QuantityLength(result, this.unit);
         }
 
-        public static double convert(double value, LengthUnit from, LengthUnit to) {
-            if (from == null || to == null || !Double.isFinite(value)) {
+        public static QuantityLength add(QuantityLength a, QuantityLength b, LengthUnit target) {
+            if (a == null || b == null || target == null) {
                 throw new IllegalArgumentException();
             }
-            double base = from.toBase(value);
-            return to.fromBase(base);
+
+            double sumBase = a.toBase() + b.toBase();
+            double result = target.fromBase(sumBase);
+
+            return new QuantityLength(result, target);
         }
 
         @Override
@@ -73,9 +78,15 @@ public class QuantityMeasurementApp {
 
     public static void main(String[] args) {
 
-        System.out.println(QuantityLength.convert(1.0, LengthUnit.FEET, LengthUnit.INCH));
-        System.out.println(QuantityLength.convert(3.0, LengthUnit.YARD, LengthUnit.FEET));
-        System.out.println(QuantityLength.convert(36.0, LengthUnit.INCH, LengthUnit.YARD));
-        System.out.println(QuantityLength.convert(1.0, LengthUnit.CENTIMETER, LengthUnit.INCH));
+        var a = new QuantityLength(1.0, LengthUnit.FEET);
+        var b = new QuantityLength(12.0, LengthUnit.INCH);
+
+        System.out.println(a.add(b));
+        System.out.println(b.add(a));
+
+        System.out.println(QuantityLength.add(
+                new QuantityLength(1.0, LengthUnit.YARD),
+                new QuantityLength(3.0, LengthUnit.FEET),
+                LengthUnit.YARD));
     }
 }

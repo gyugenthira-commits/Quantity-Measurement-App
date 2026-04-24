@@ -38,12 +38,7 @@ public class QuantityMeasurementApp {
         }
 
         public QuantityLength add(QuantityLength other) {
-            if (other == null) throw new IllegalArgumentException();
-
-            double sumBase = this.toBase() + other.toBase();
-            double result = this.unit.fromBase(sumBase);
-
-            return new QuantityLength(result, this.unit);
+            return add(this, other, this.unit);
         }
 
         public static QuantityLength add(QuantityLength a, QuantityLength b, LengthUnit target) {
@@ -81,12 +76,8 @@ public class QuantityMeasurementApp {
         var a = new QuantityLength(1.0, LengthUnit.FEET);
         var b = new QuantityLength(12.0, LengthUnit.INCH);
 
-        System.out.println(a.add(b));
-        System.out.println(b.add(a));
-
-        System.out.println(QuantityLength.add(
-                new QuantityLength(1.0, LengthUnit.YARD),
-                new QuantityLength(3.0, LengthUnit.FEET),
-                LengthUnit.YARD));
+        System.out.println(QuantityLength.add(a, b, LengthUnit.FEET));
+        System.out.println(QuantityLength.add(a, b, LengthUnit.INCH));
+        System.out.println(QuantityLength.add(a, b, LengthUnit.YARD));
     }
 }
